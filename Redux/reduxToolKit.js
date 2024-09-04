@@ -1,48 +1,58 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+// src/index.js
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider, useSelector, useDispatch } from "react-redux";
+import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-// Define initial state
-const initialState = {
-  userData: null,
-  status: "idle",
-  error: null,
-};
-
-// Define a thunk for fetching user data
-export const fetchUserData = createAsyncThunk("apiFetch", async (userId) => {
-  const response = await fetch(`/api/user/${userId}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch user data");
-  }
-  const data = await response.json();
-  return data;
-});
-
-// Create slice
-const userSlice = createSlice({
-  name: "user",
-  initialState,
+// 1. Create a slice with actions and reducers
+const counterSlice = createSlice({
+  name: "counter",
+  initialState: {
+    value: 0,
+  },
   reducers: {
-    logout: (state) => {
-      state.userData = null;
-      localStorage.removeItem("fittrack-app-token");
+    increment: (state) => {
+      state.value += 1;
+    },
+    decrement: (state) => {
+      state.value -= 1;
+    },
+    incrementByAmount: (state, action) => {
+      state.value += action.payload;
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchUserData.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchUserData.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.userData = action.payload;
-      })
-      .addCase(fetchUserData.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      });
+});
+
+const { increment, decrement, incrementByAmount } = counterSlice.actions;
+
+// 2. Configure the store with the slice reducer
+const store = configureStore({
+  reducer: {
+    counter: counterSlice.reducer,
   },
 });
 
-// Export the action creators and reducer
-export const { logout } = userSlice.actions;
-export default userSlice.reducer;
+// 3. Create a React component that uses Redux state and actions
+function Counter() {
+  const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <h1>Counter: {count}</h1>
+      <button onClick={() => dispatch(increment())}>Increment</button>
+      <button onClick={() => dispatch(decrement())}>Decrement</button>
+      <button onClick={() => dispatch(incrementByAmount(5))}>
+        Increment by 5
+      </button>
+    </div>
+  );
+}
+
+// 4. Render the app wrapped in the Redux Provider
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <Provider store={store}>
+    <Counter />
+  </Provider>
+);
