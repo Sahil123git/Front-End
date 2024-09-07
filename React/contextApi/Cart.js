@@ -1,11 +1,12 @@
 import { useContext } from "react";
-import { CartContext } from "./CartContext";
+import { CartContext, useContextData } from "./CartContext";
 const Cart = () => {
   const cart = useContext(CartContext);
+  //   const cart  = useContextData(); //can use this to get data from context api
   return (
     <div>
       <h2>Cart Data</h2>
-      {cart.items.map((ele, ind) => (
+      {cart.items.map((ele) => (
         <div key={crypto.randomUUID()}>
           {ele.name}:{ele.price}
         </div>

@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 export const CartContext = createContext(null);
 export const ContextProvider = (props) => {
@@ -9,3 +9,4 @@ export const ContextProvider = (props) => {
     </CartContext.Provider>
   );
 };
+export const useContextData = useContext(CartContext); //creating custom hook for getting data
