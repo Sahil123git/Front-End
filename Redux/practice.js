@@ -26,7 +26,8 @@ const fetchDataFailure = (error) => ({
 // Thunk Action for API Call
 const fetchData = () => {
   return (dispatch) => {
-    dispatch(fetchDataRequest());
+    dispatch(
+      ());
     fetch("https://jsonplaceholder.typicode.com/posts")
       .then((response) => response.json())
       .then((data) => dispatch(fetchDataSuccess(data)))
